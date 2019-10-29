@@ -1,0 +1,1 @@
+#include "DrillingRecordHasher.h"
