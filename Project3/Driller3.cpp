@@ -288,7 +288,7 @@ void outputLoop(void) {
 
 		listToArray();
 
-		cout << "Enter (o)utput, (s)ort, (f)ind, (m)erge, (p)urge, (r)ecords, or (q)uit: ";
+		cout << "Enter (o)utput, (s)ort, (f)ind, (m)erge, (p)urge, (r)ecords, (h)ash table, or (q)uit: ";
 
 		cin >> choice;
 		getline(cin, temp);
@@ -425,7 +425,10 @@ void outputLoop(void) {
 						// invalid column
 					}
 
-					// Column is the sorted column therefore can use binary search
+					// Search via hash table
+					else if (column == 1) {
+
+					}
 					else {
 						if ((column >= 2) && (column <= 17)) {
 							// Get value to sort
@@ -435,7 +438,7 @@ void outputLoop(void) {
 							getline(cin, garbage);
 							tempDR->setNum(value, column - 2);
 						}
-						else if ((column == 0) || (column == 1)) {
+						else if (column == 0) {
 							string value;
 							cout << "Enter exact text on which to search: ";
 							getline(cin, value);
@@ -573,10 +576,91 @@ void outputLoop(void) {
 					}
 					break;
 
+				case 'h':
+					cout << "Hash case" << endl;
+
+					// Checks for file to output to
+					cout << "Enter output file name: ";
+					getline(cin, fileName);
+
+					// Output to chosen file
+					if (!(fileName.empty())) {
+						// open file
+						outputFile.open(fileName);
+
+						// Loops until valid file is entered
+						while (!(outputFile.is_open())) {
+							cout << "File is not available." << endl;
+
+							// Checks for file to output to
+							cout << "Enter output file name: ";
+							getline(cin, fileName);
+
+							// open file
+							outputFile.open(fileName);
+						}
+
+						// This case display all items by bucket
+						// #: output
+						// Skip bucket if empty
+						// For overflow
+						// OVERFLOW: output
+						// Newline after all items in that bucket done
+						// Display capacity
+						outputFile << "Base Capacity: " << 0		// Size of hash table
+							<< "; Total Capacity: " << 0	// Size of hash plus overflow
+							<< "; Load Factor: " << 0		// Drilling Records / Total Capacity
+							<< endl;
+						// Outputs internal tallies
+						outputFile << "Data lines read: " << dataLines
+							<< "; Valid Drilling records read: " << validEntries
+							<< "; Drilling records in memory: " << drillingList->getSize()
+							<< endl;
+					}
+
+					else {
+						// Prints data (loop)
+						try {
+							// Drilling List has nothing to display
+							if (drillingList->getSize() == 0) {
+								// Outputs internal tallies
+								cout << "Data lines read: " << dataLines
+									<< "; Valid Drilling records read: " << validEntries
+									<< "; Drilling records in memory: " << drillingList->getSize()
+									<< endl;
+								break;
+							}
+							while (enumerator.hasNext()) {
+								cout << enumerator.next() << endl;
+							}
+
+							// This case display all items by bucket
+							// #: output
+							// Skip bucket if empty
+							// For overflow
+							// OVERFLOW: output
+							// Newline after all items in that bucket done
+							// Display capacity
+							cout << "Base Capacity: " << 0		// Size of hash table
+								<< "; Total Capacity: " << 0	// Size of hash plus overflow
+								<< "; Load Factor: " << 0		// Drilling Records / Total Capacity
+								<< endl;
+							// Outputs internal tallies
+							cout << "Data lines read: " << dataLines
+								<< "; Valid Drilling records read: " << validEntries
+								<< "; Drilling records in memory: " << drillingList->getSize()
+								<< endl;
+						}
+						catch (ExceptionIndexOutOfRange e) {
+							// It broke :(
+						}
+					}
+
+					break;
 			}
 
-			cout << "Enter (o)utput, (s)ort, (f)ind, (m)erge, (p)urge, (r)ecords, or (q)uit: ";
-				cin >> choice;
+			cout << "Enter (o)utput, (s)ort, (f)ind, (m)erge, (p)urge, (r)ecords, (h)ash table, or (q)uit: ";
+			cin >> choice;
 			getline(cin, garbage);
 		}
 	}

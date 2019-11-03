@@ -22,7 +22,7 @@ class HashTable {
 private:
 	Comparator<T>* comparator;                                // used to determine item equality
 	Hasher<T>* hasher;                                        // used to compute hash value
-	unsigned long size = 0;                                    // actual number of items currently in hash table
+	unsigned long size = 0;                                   // actual number of items currently in hash table
 	float maxLoadFactor = DEFAULT_MAX_LOAD_FACTOR;
 	float minLoadFactor = DEFAULT_MIN_LOAD_FACTOR;
 	unsigned int scheduleIndex = DEFAULT_SCHEDULE_INDEX;
@@ -67,19 +67,46 @@ public:
 // creates an empty table of DEFAULT_BASE_CAPACITY
 template <typename T>
 HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher) {
+	// Initialize Class
+	this->comparator = comparator;
+	this->hasher = hasher;
 
+	// Initialize the table at size
+	table = new OULinkedList<T>[baseCapacity];
 }
 
 // if size given, creates empty table with size from schedule of sufficient capacity (considering maxLoadFactor)
 template <typename T>
-HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher,	unsigned long size, float maxLoadFactor = DEFAULT_MAX_LOAD_FACTOR, float minLoadFactor = DEFAULT_MIN_LOAD_FACTOR) {
+HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher,	unsigned long size, float maxLoadFactor, float minLoadFactor) {
+	// Initialize Class
+	this->comparator = comparator;
+	this->hasher = hasher;
+	this->maxLoadFactor = maxLoadFactor;
+	this->minLoadFactor = minLoadFactor;
 
+	int minSize = size / maxLoadFactor; // This gives the min number of necessary buckets
+	scheduleIndex = 0;
+
+	// Loops through the schedule until a size is found greater than minSize
+	// >=?
+	while (minSize > SCHEDULE[scheduleIndex]) {
+		scheduleIndex++;
+	}
+
+	// Base capacity of the table
+	baseCapacity = SCHEDULE[scheduleIndex];
+
+	// Initialize the table at baseCapacity
+	table = new OULinkedList<T>[baseCapacity];
 }
 
+// Deallocate all mem
 template <typename T>
 HashTable<T> :: ~HashTable() {
 
 }
+
+// TODO: If the table exceeds min/max loadfactor, resize
 
 // if an equivalent item is not already present, insert item at proper location and return true
 // if an equivalent item is already present, leave table unchanged and return false
@@ -112,31 +139,32 @@ T HashTable<T> :: find(T item) const {
 // returns the current number of items in the table
 template <typename T>
 unsigned long HashTable<T> :: getSize() const {
-
+	return size;
 }
 
 // returns the current base capacity of the table
 template <typename T>
 unsigned long HashTable<T> :: getBaseCapacity() const {
-
+	return baseCapacity;
 }
 
 // returns the current total capacity of the table
 template <typename T>
 unsigned long HashTable<T> :: getTotalCapacity() const {
-
+	return totalCapacity;
 }
 
 // returns the current load factor of the table
 template <typename T>
 float HashTable<T> :: getLoadFactor() const {
-
+	return (float)size / totalCapacity;
 }
 
 // returns the current bucket number for an item
 template <typename T>
 unsigned long HashTable<T> :: getBucketNumber(T item) const {
-
+	// Return the key
+	return 0;
 }
 
 #endif // !HASH_TABLE

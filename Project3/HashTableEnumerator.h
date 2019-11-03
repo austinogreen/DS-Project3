@@ -24,6 +24,7 @@ public:
 
 template <typename T>
 HashTableEnumerator<T> :: HashTableEnumerator(HashTable<T>* hashTable) {
+	this->hashTable = hashTable;
 
 }
 
