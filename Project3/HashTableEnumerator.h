@@ -22,4 +22,31 @@ public:
 
 // Add your implementation below this line.
 
+template <typename T>
+HashTableEnumerator<T> :: HashTableEnumerator(HashTable<T>* hashTable) {
+
+}
+
+template <typename T>
+HashTableEnumerator<T> :: ~HashTableEnumerator() {
+
+}
+
+template <typename T>
+bool HashTableEnumerator<T> :: hasNext() const {
+
+}
+
+// throws ExceptionEnumerationBeyondEnd if no next item is available
+template <typename T>
+T HashTableEnumerator<T> :: next() {
+
+}
+
+// throws ExceptionEnumerationBeyondEnd if no next item is available
+template <typename T>
+T HashTableEnumerator<T> :: peek() const {
+
+}
+
 #endif // !HASH_TABLE_ENUMERATOR

@@ -64,4 +64,79 @@ public:
 
 // Add your implementation below this line.
 
+// creates an empty table of DEFAULT_BASE_CAPACITY
+template <typename T>
+HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher) {
+
+}
+
+// if size given, creates empty table with size from schedule of sufficient capacity (considering maxLoadFactor)
+template <typename T>
+HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher,	unsigned long size, float maxLoadFactor = DEFAULT_MAX_LOAD_FACTOR, float minLoadFactor = DEFAULT_MIN_LOAD_FACTOR) {
+
+}
+
+template <typename T>
+HashTable<T> :: ~HashTable() {
+
+}
+
+// if an equivalent item is not already present, insert item at proper location and return true
+// if an equivalent item is already present, leave table unchanged and return false
+template <typename T>
+bool HashTable<T> :: insert(T item) {
+
+}
+
+// if an equivalent item is already present, replace item and return true
+// if an equivalent item is not already present, leave table unchanged and return false
+template <typename T>
+bool HashTable<T> :: replace(T item) {
+
+}
+
+// if an equivalent item is already present, remove item and return true
+// if an equivalent item is not already present, leave table unchanged and return false
+template <typename T>
+bool HashTable<T> :: remove(T item) {
+
+}
+
+// if an equivalent item is present, return a copy of the item
+// if an equivalent item is not present, throw a new ExceptionHashTableAccess
+template <typename T>
+T HashTable<T> :: find(T item) const {
+
+}
+
+// returns the current number of items in the table
+template <typename T>
+unsigned long HashTable<T> :: getSize() const {
+
+}
+
+// returns the current base capacity of the table
+template <typename T>
+unsigned long HashTable<T> :: getBaseCapacity() const {
+
+}
+
+// returns the current total capacity of the table
+template <typename T>
+unsigned long HashTable<T> :: getTotalCapacity() const {
+
+}
+
+// returns the current load factor of the table
+template <typename T>
+float HashTable<T> :: getLoadFactor() const {
+
+}
+
+// returns the current bucket number for an item
+template <typename T>
+unsigned long HashTable<T> :: getBucketNumber(T item) const {
+
+}
+
 #endif // !HASH_TABLE
