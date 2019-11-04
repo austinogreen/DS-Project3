@@ -77,6 +77,7 @@ void pergeDrillingList(OULinkedList<DrillingRecord>* pergeList) {
 // Converts the list to an array
 // Arrays are better for searching and sorting
 // This is O(n) were n is the number of items in the drillingList
+// TODO Also hash list
 void listToArray() {
 
 	// Deletes previous array and recreates it
