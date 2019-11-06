@@ -160,7 +160,11 @@ bool HashTable<T> :: insert(T item) {
 		}
 	}
 
-	// check if over capacity
+	// Handle case where list over cap
+	float loadFactor = ((float)size) / totalCapacity;
+	if (loadFactor >= minLoadFactor) {
+		resize();
+	}
 
 	return true;
 }
@@ -229,21 +233,50 @@ T HashTable<T> :: find(T item) const {
 
 template<typename T>
 void HashTable<T>::resize(void) {
-	HashTable<T>* tempHT = new HashTable<T>(comparator, hasher, size);
-	if (tempHT == NULL) {
-		throw new ExceptionMemoryNotAvailable;
+	// Create a temp table at the base capacity
+	// Initialize array at baseCapaticty
+	OULinkedList<T>* tempTable[baseCapacity] = table;
+
+	int minSize = size / maxLoadFactor; // This gives the min number of necessary buckets
+	scheduleIndex = 0;
+
+	// Loops through the schedule until a size is found greater than minSize
+	// >=?
+	while (minSize > SCHEDULE[scheduleIndex]) {
+		scheduleIndex++;
 	}
 
+	// Base capacity of the table
+	baseCapacity = SCHEDULE[scheduleIndex];
+
+	// Initialize array at baseCapaticty
+	OULinkedList<T>* list[baseCapacity];
+	table = list;
+
+	list = NULL;
+
+	// Initializes all buckets
 	for (unsigned int i = 0; i < baseCapacity; i++) {
-		OULinkedListEnumerator<T>* enumerator = table[i].enumerator();
+		table[i] = new OULinkedList<T>(comparator);
+
+		if (table[i] == NULL) {
+			throw new ExceptionMemoryNotAvailable;
+		}
+	}
+
+	// Resets size and total capacity
+	size = 0;
+	totalCapacity = baseCapacity;
+
+	// Loops through old table
+	// Inserts all items in new table
+	for (unsigned int i = 0; i < tempTable.size(); i++) {
+		OULinkedListEnumerator<T>* enumerator = tempTable[i].enumerator();
 
 		while (enumerator->hasNext()) {
-			tempHT->insert(enumerator->next());
+			insert(enumerator.next());
 		}
-
-		delete table[i];
 	}
-	
 }
 
 // returns the current number of items in the table
