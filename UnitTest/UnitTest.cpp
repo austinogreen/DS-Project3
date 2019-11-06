@@ -11,6 +11,7 @@ namespace UnitTest
 		
 		TEST_METHOD(TestMethod1)
 		{
+			Assert::IsTrue(true);
 		}
 	};
 }

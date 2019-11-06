@@ -576,7 +576,7 @@ void outputLoop(void) {
 						}
 					}
 					break;
-
+				/*
 				case 'h':
 					cout << "Hash case" << endl;
 
@@ -658,6 +658,7 @@ void outputLoop(void) {
 					}
 
 					break;
+					*/
 			}
 
 			cout << "Enter (o)utput, (s)ort, (f)ind, (m)erge, (p)urge, (r)ecords, (h)ash table, or (q)uit: ";

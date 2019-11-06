@@ -55,6 +55,9 @@ public:
 	// if an equivalent item is not present, throw a new ExceptionHashTableAccess
 	T find(T item) const;
 
+	// If the array goes over a load factor threshold, resize
+	void resize(void);
+
 	unsigned long getSize() const;                            // returns the current number of items in the table
 	unsigned long getBaseCapacity() const;                    // returns the current base capacity of the table
 	unsigned long getTotalCapacity() const;                    // returns the current total capacity of the table
@@ -71,8 +74,17 @@ HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher) {
 	this->comparator = comparator;
 	this->hasher = hasher;
 
-	// Initialize the table at size
-	table = new OULinkedList<T>[baseCapacity];
+	// Initialize the table at baseCapacity
+	OULinkedList<T>* list[baseCapacity];
+	table = list;
+	for (unsigned int i = 0; i < baseCapacity; i++) {
+		table[i] = new OULinkedList<T>(comparator);
+		if (table[i] == NULL) {
+			throw new ExceptionMemoryNotAvailable;
+		}
+	}
+
+	list = NULL;
 }
 
 // if size given, creates empty table with size from schedule of sufficient capacity (considering maxLoadFactor)
@@ -95,9 +107,19 @@ HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher,	unsigned
 
 	// Base capacity of the table
 	baseCapacity = SCHEDULE[scheduleIndex];
+	
+	// Initialize array at baseCapaticty
+	OULinkedList<T>* list[baseCapacity];
+	table = list;
 
-	// Initialize the table at baseCapacity
-	table = new OULinkedList<T>[baseCapacity];
+	for (unsigned int i = 0; i < baseCapacity; i++) {
+		table[i] = new OULinkedList<T>(comparator);
+		if (table[i] == NULL) {
+			throw new ExceptionMemoryNotAvailable;
+		}
+	}
+
+	list = NULL;
 }
 
 // Deallocate all mem
@@ -110,30 +132,118 @@ HashTable<T> :: ~HashTable() {
 
 // if an equivalent item is not already present, insert item at proper location and return true
 // if an equivalent item is already present, leave table unchanged and return false
+// TODO: Check if goes over the size limit
 template <typename T>
 bool HashTable<T> :: insert(T item) {
+	unsigned long bucket = getBucketNumber(item);
 
+	try {
+		// Tries to get the first element, if throws an excpetion the bucket is empty
+		table[bucket]->getFirst();
+		// Chain already exists
+		// If the item already exists, return false
+		if (!(table[bucket]->insert(item))) {
+			return false;
+		}
+		size++;
+	}
+	// The list is null
+	catch (ExceptionLinkedListAccess e) {
+		// If the item inserts, need to update the total capacity
+		if (table[bucket]->insert(item)) {
+			totalCapacity++;
+			size++;
+		}
+		// Item is already in the chain
+		else {
+			return false;
+		}
+	}
+
+	// check if over capacity
+
+	return true;
 }
 
 // if an equivalent item is already present, replace item and return true
 // if an equivalent item is not already present, leave table unchanged and return false
 template <typename T>
 bool HashTable<T> :: replace(T item) {
-
+	unsigned long bucket = getBucketNumber(item);
+	
+	// Replace item and return true if done
+	return table[bucket]->replace(item);
 }
 
 // if an equivalent item is already present, remove item and return true
 // if an equivalent item is not already present, leave table unchanged and return false
 template <typename T>
 bool HashTable<T> :: remove(T item) {
+	unsigned long bucket = getBucketNumber(item);
 
+	if (table[bucket]->remove) {
+		size--;
+	}
+	else {
+		// If the item was not in the list, return false
+		return false;
+	}
+	// See if there are more items in the list
+	try {
+		table[bucket]->getFirst();
+		// If it does not throw an exceptions, that wasn't the only item in the list
+		totalCapacity--;
+	}
+	// there were other items in the list therefore don't decrement total cap
+	catch (ExceptionLinkedListAccess e) {}
+
+	// Handle case where list under cap
+	float loadFactor = ((float)size) / totalCapacity;
+	if (loadFactor <= minLoadFactor) {
+		resize();
+	}
+
+	return true;
 }
 
 // if an equivalent item is present, return a copy of the item
 // if an equivalent item is not present, throw a new ExceptionHashTableAccess
 template <typename T>
 T HashTable<T> :: find(T item) const {
+	unsigned long bucket = getBucketNumber(item);
 
+	if (table[bucket] == NULL) {
+		throw new ExceptionHashTableAccess;
+	}
+	
+	// Try to return the item;
+	try {
+		// Return the item
+		return table[bucket]->find(item);
+	}
+	// Item is not in list, therefore throw exception
+	catch (ExceptionLinkedListAccess e) {
+		throw new ExceptionHashTableAccess;
+	}
+}
+
+template<typename T>
+void HashTable<T>::resize(void) {
+	HashTable<T>* tempHT = new HashTable<T>(comparator, hasher, size);
+	if (tempHT == NULL) {
+		throw new ExceptionMemoryNotAvailable;
+	}
+
+	for (unsigned int i = 0; i < baseCapacity; i++) {
+		OULinkedListEnumerator<T>* enumerator = table[i].enumerator();
+
+		while (enumerator->hasNext()) {
+			tempHT->insert(enumerator->next());
+		}
+
+		delete table[i];
+	}
+	
 }
 
 // returns the current number of items in the table
@@ -164,7 +274,7 @@ float HashTable<T> :: getLoadFactor() const {
 template <typename T>
 unsigned long HashTable<T> :: getBucketNumber(T item) const {
 	// Return the key
-	return 0;
+	return hasher->hash(item) % baseCapacity;
 }
 
 #endif // !HASH_TABLE
