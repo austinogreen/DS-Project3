@@ -1,13 +1,8 @@
 Hash Table Enumerator
 Hash Table
-	Check if it goes over the hash limit
 Driller
-	Search Via Hash Table
-	Hash Table Output
-Change enumerator for empty
 
 HELP:
 	Array doesn't evaluate to constant
 	How to print
 		Call get bucket and compare to previous?
-	How to do enumerator

@@ -14,6 +14,7 @@
 #include "OULink.h"
 #include "OULinkedList.h"
 #include "OULinkedListEnumerator.h"
+#include "HashTable.h"
 
 
 using namespace std;
@@ -21,6 +22,7 @@ using namespace std;
 // Global Drilling Array and List
 ResizableArray<DrillingRecord>* drillingArray = NULL;
 OULinkedList<DrillingRecord>* drillingList = NULL;
+HashTable<DrillingRecord>* drillingTable = NULL;
 
 // string to dump bad data
 string garbage;
@@ -78,6 +80,7 @@ void pergeDrillingList(OULinkedList<DrillingRecord>* pergeList) {
 // Arrays are better for searching and sorting
 // This is O(n) were n is the number of items in the drillingList
 // TODO Also hash list
+// Include size when creating hash table
 void listToArray() {
 
 	// Deletes previous array and recreates it
@@ -338,8 +341,7 @@ void outputLoop(void) {
 
 							outputFile.close();
 						}
-						catch (ExceptionIndexOutOfRange e) {
-							// It broke :(
+						catch (ExceptionIndexOutOfRange* e) {
 						}
 					}
 
@@ -356,7 +358,7 @@ void outputLoop(void) {
 								<< "; Drilling records in memory: " << drillingArray->getSize()
 								<< endl;
 						}
-						catch (ExceptionIndexOutOfRange e) {
+						catch (ExceptionIndexOutOfRange* e) {
 							// It broke :(
 						}
 					}
@@ -544,7 +546,7 @@ void outputLoop(void) {
 								<< "; Drilling records in memory: " << drillingList->getSize()
 								<< endl;
 						}
-						catch (ExceptionIndexOutOfRange e) {
+						catch (ExceptionIndexOutOfRange* e) {
 							// It broke :(
 						}
 					}
@@ -571,7 +573,7 @@ void outputLoop(void) {
 								<< "; Drilling records in memory: " << drillingList->getSize()
 								<< endl;
 						}
-						catch (ExceptionIndexOutOfRange e) {
+						catch (ExceptionIndexOutOfRange* e) {
 							// It broke :(
 						}
 					}

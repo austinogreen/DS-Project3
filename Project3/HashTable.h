@@ -74,17 +74,18 @@ HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher) {
 	this->comparator = comparator;
 	this->hasher = hasher;
 
-	// Initialize the table at baseCapacity
-	OULinkedList<T>* list[baseCapacity];
-	table = list;
+	// Initialize array at base capacity
+	table = new OULinkedList<T>*[baseCapacity];
+	if (table == NULL) {
+		throw new ExceptionMemoryNotAvailable;
+	}
+
 	for (unsigned int i = 0; i < baseCapacity; i++) {
 		table[i] = new OULinkedList<T>(comparator);
 		if (table[i] == NULL) {
 			throw new ExceptionMemoryNotAvailable;
 		}
 	}
-
-	list = NULL;
 }
 
 // if size given, creates empty table with size from schedule of sufficient capacity (considering maxLoadFactor)
@@ -96,7 +97,7 @@ HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher,	unsigned
 	this->maxLoadFactor = maxLoadFactor;
 	this->minLoadFactor = minLoadFactor;
 
-	int minSize = size / maxLoadFactor; // This gives the min number of necessary buckets
+	unsigned int minSize = (unsigned int)(size / maxLoadFactor); // This gives the min number of necessary buckets
 	scheduleIndex = 0;
 
 	// Loops through the schedule until a size is found greater than minSize
@@ -107,10 +108,12 @@ HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher,	unsigned
 
 	// Base capacity of the table
 	baseCapacity = SCHEDULE[scheduleIndex];
-	
+
 	// Initialize array at baseCapaticty
-	OULinkedList<T>* list[baseCapacity];
-	table = list;
+	table = new OULinkedList<T> * [baseCapacity];
+	if (table == NULL) {
+		throw new ExceptionMemoryNotAvailable;
+	}
 
 	for (unsigned int i = 0; i < baseCapacity; i++) {
 		table[i] = new OULinkedList<T>(comparator);
@@ -118,14 +121,16 @@ HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher,	unsigned
 			throw new ExceptionMemoryNotAvailable;
 		}
 	}
-
-	list = NULL;
 }
 
 // Deallocate all mem
 template <typename T>
 HashTable<T> :: ~HashTable() {
-
+	for (unsigned int i = 0; i < baseCapacity; i++) {
+		delete table[i];
+		table[i] = NULL;
+	}
+	delete[] table;
 }
 
 // TODO: If the table exceeds min/max loadfactor, resize
@@ -148,7 +153,7 @@ bool HashTable<T> :: insert(T item) {
 		size++;
 	}
 	// The list is null
-	catch (ExceptionLinkedListAccess e) {
+	catch (ExceptionLinkedListAccess*e) {
 		// If the item inserts, need to update the total capacity
 		if (table[bucket]->insert(item)) {
 			totalCapacity++;
@@ -226,7 +231,7 @@ T HashTable<T> :: find(T item) const {
 		return table[bucket]->find(item);
 	}
 	// Item is not in list, therefore throw exception
-	catch (ExceptionLinkedListAccess e) {
+	catch (ExceptionLinkedListAccess* e) {
 		throw new ExceptionHashTableAccess;
 	}
 }
@@ -235,9 +240,9 @@ template<typename T>
 void HashTable<T>::resize(void) {
 	// Create a temp table at the base capacity
 	// Initialize array at baseCapaticty
-	OULinkedList<T>* tempTable[baseCapacity] = table;
+	OULinkedList<T>** tempTable = new OULinkedList<T>*[baseCapacity];
 
-	int minSize = size / maxLoadFactor; // This gives the min number of necessary buckets
+	unsigned int minSize = (unsigned int) (size / maxLoadFactor); // This gives the min number of necessary buckets
 	scheduleIndex = 0;
 
 	// Loops through the schedule until a size is found greater than minSize
@@ -250,15 +255,13 @@ void HashTable<T>::resize(void) {
 	baseCapacity = SCHEDULE[scheduleIndex];
 
 	// Initialize array at baseCapaticty
-	OULinkedList<T>* list[baseCapacity];
-	table = list;
+	table = new OULinkedList<T> * [baseCapacity];
+	if (table == NULL) {
+		throw new ExceptionMemoryNotAvailable;
+	}
 
-	list = NULL;
-
-	// Initializes all buckets
 	for (unsigned int i = 0; i < baseCapacity; i++) {
 		table[i] = new OULinkedList<T>(comparator);
-
 		if (table[i] == NULL) {
 			throw new ExceptionMemoryNotAvailable;
 		}
@@ -270,10 +273,10 @@ void HashTable<T>::resize(void) {
 
 	// Loops through old table
 	// Inserts all items in new table
-	for (unsigned int i = 0; i < tempTable.size(); i++) {
-		OULinkedListEnumerator<T>* enumerator = tempTable[i].enumerator();
+	for (unsigned int i = 0; i < sizeof(tempTable); i++) {
+		OULinkedListEnumerator<T> enumerator = tempTable[i]->enumerator();
 
-		while (enumerator->hasNext()) {
+		while (enumerator.hasNext()) {
 			insert(enumerator.next());
 		}
 	}

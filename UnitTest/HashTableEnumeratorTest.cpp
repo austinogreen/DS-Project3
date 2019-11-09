@@ -2,17 +2,17 @@
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 
-namespace DrillingRecordHasherTest
+namespace HashTableEnumeratorTest
 {
-	TEST_CLASS(DrillingRecordHasherTest)
+	TEST_CLASS(HashTableEnumeratorTest)
 	{
 	public:
-		
+
 		TEST_METHOD(TestHash)
 		{
 			DrillingRecord* dr = new DrillingRecord();
 			DrillingRecordHasher* hasher = new DrillingRecordHasher();
-			dr->setString("00:00:00",1);
+			dr->setString("00:00:00", 1);
 
 			Assert::IsTrue(hasher->hash(*dr) == 404);
 

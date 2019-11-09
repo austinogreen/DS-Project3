@@ -16,7 +16,7 @@ long long binarySearch(const T& item, const ResizableArray<T>& array, const Comp
 	// Parameters of binary search
 	long long left = 0;
 	long long right = (long long)(array.getSize() - 1);
-	long long middle;
+	long long middle = (right + left) / 2;
 
 	int compare;
 
