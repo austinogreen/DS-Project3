@@ -232,6 +232,7 @@ T HashTable<T> :: find(T item) const {
 	}
 	// Item is not in list, therefore throw exception
 	catch (ExceptionLinkedListAccess* e) {
+		delete e;
 		throw new ExceptionHashTableAccess;
 	}
 }

@@ -15,6 +15,8 @@
 #include "OULinkedList.h"
 #include "OULinkedListEnumerator.h"
 #include "HashTable.h"
+#include "HashTableEnumerator.h"
+#include "DrillingRecordHasher.h"
 
 
 using namespace std;
@@ -78,17 +80,22 @@ void pergeDrillingList(OULinkedList<DrillingRecord>* pergeList) {
 
 // Converts the list to an array
 // Arrays are better for searching and sorting
-// This is O(n) were n is the number of items in the drillingList
-// TODO Also hash list
+// Also hash list
 // Include size when creating hash table
+// This is O(n) were n is the number of items in the drillingList
 void listToArray() {
 
 	// Deletes previous array and recreates it
 	delete drillingArray;
+	delete drillingTable;
 	drillingArray = new ResizableArray<DrillingRecord>();
+	drillingTable = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(), drillingList->getSize());
 
 	if (drillingArray == NULL) {
-		throw new ExceptionMemoryNotAvailable();
+		throw new ExceptionMemoryNotAvailable;
+	}
+	if (drillingTable == NULL) {
+		throw new ExceptionMemoryNotAvailable;
 	}
 
 	// Doesn't have any items
@@ -97,11 +104,15 @@ void listToArray() {
 	}
 
 	OULinkedListEnumerator<DrillingRecord> enumerator = drillingList->enumerator();
+	DrillingRecord tempDR;
+
 
 	// While there is a next item
 	while (enumerator.hasNext()) {
-		// Add the items to drillingArray
-		drillingArray->add(enumerator.next());
+		// Add the items to drillingArray and drillingTable
+		tempDR = enumerator.next();
+		drillingArray->add(tempDR);
+		drillingTable->insert(tempDR);
 	}
 
 	return;
@@ -342,6 +353,7 @@ void outputLoop(void) {
 							outputFile.close();
 						}
 						catch (ExceptionIndexOutOfRange* e) {
+							delete e;
 						}
 					}
 
@@ -359,7 +371,7 @@ void outputLoop(void) {
 								<< endl;
 						}
 						catch (ExceptionIndexOutOfRange* e) {
-							// It broke :(
+							delete e;
 						}
 					}
 					break;
@@ -430,7 +442,19 @@ void outputLoop(void) {
 
 					// Search via hash table
 					else if (column == 1) {
+						string value;
+						cout << "Enter exact text on which to search: ";
+						getline(cin, value);
+						tempDR->setString(value, column);
 
+						try {
+							cout << drillingTable->find(*tempDR) << endl;
+							cout << "Drilling records found: 1." << endl;
+						}
+						catch (ExceptionHashTableAccess * e) {
+							cout << "Drilling records found: 0." << endl;
+							delete e;
+						}
 					}
 					else {
 						if ((column >= 2) && (column <= 17)) {
@@ -524,63 +548,55 @@ void outputLoop(void) {
 							// open file
 							outputFile.open(fileName);
 						}
-
-						try {
-							// Drilling List has nothing to display
-							if (drillingList->getSize() == 0) {
-								// Outputs internal tallies
-								outputFile << "Data lines read: " << dataLines
-									<< "; Valid Drilling records read: " << validEntries
-									<< "; Drilling records in memory: " << drillingList->getSize()
-									<< endl;
-								break;
-							}
-
-							while (enumerator.hasNext()) {
-								outputFile << enumerator.next() << endl;
-							}
-
+						// Drilling List has nothing to display
+						if (drillingList->getSize() == 0) {
 							// Outputs internal tallies
 							outputFile << "Data lines read: " << dataLines
 								<< "; Valid Drilling records read: " << validEntries
 								<< "; Drilling records in memory: " << drillingList->getSize()
 								<< endl;
+							break;
 						}
-						catch (ExceptionIndexOutOfRange* e) {
-							// It broke :(
+
+						while (enumerator.hasNext()) {
+							outputFile << enumerator.next() << endl;
 						}
+
+						// Outputs internal tallies
+						outputFile << "Data lines read: " << dataLines
+							<< "; Valid Drilling records read: " << validEntries
+							<< "; Drilling records in memory: " << drillingList->getSize()
+							<< endl;
 					}
 
 					else {
-						// Prints data (loop)
-						try {
-							// Drilling List has nothing to display
-							if (drillingList->getSize() == 0) {
-								// Outputs internal tallies
-								cout << "Data lines read: " << dataLines
-									<< "; Valid Drilling records read: " << validEntries
-									<< "; Drilling records in memory: " << drillingList->getSize()
-									<< endl;
-								break;
-							}
-							while (enumerator.hasNext()) {
-								cout << enumerator.next() << endl;
-							}
-
+						// Drilling List has nothing to display
+						if (drillingList->getSize() == 0) {
 							// Outputs internal tallies
 							cout << "Data lines read: " << dataLines
 								<< "; Valid Drilling records read: " << validEntries
 								<< "; Drilling records in memory: " << drillingList->getSize()
 								<< endl;
+							break;
 						}
-						catch (ExceptionIndexOutOfRange* e) {
-							// It broke :(
+						while (enumerator.hasNext()) {
+							cout << enumerator.next() << endl;
 						}
+
+						// Outputs internal tallies
+						cout << "Data lines read: " << dataLines
+							<< "; Valid Drilling records read: " << validEntries
+							<< "; Drilling records in memory: " << drillingList->getSize()
+							<< endl;
 					}
 					break;
-				/*
+
 				case 'h':
-					cout << "Hash case" << endl;
+
+					// HashTable Enumerator and the Previous and Current Buckets
+					HashTableEnumerator<DrillingRecord> enumerator = HashTableEnumerator<DrillingRecord>(drillingTable);
+					unsigned long currBucket;
+					unsigned long prevBucket = -1;
 
 					// Checks for file to output to
 					cout << "Enter output file name: ";
@@ -604,15 +620,24 @@ void outputLoop(void) {
 						}
 
 						// This case display all items by bucket
-						// #: output
-						// Skip bucket if empty
-						// For overflow
-						// OVERFLOW: output
-						// Newline after all items in that bucket done
+						while (enumerator.hasNext()) {
+							// Gets bucket number
+							tempDR = &(enumerator.peek());
+							currBucket = drillingTable->getBucketNumber(*tempDR);
+														
+							if (prevBucket == currBucket) {
+								outputFile << "OVERFLOW: " << enumerator.next() << endl;
+							}
+							else {
+								outputFile << endl << currBucket << ": " << enumerator.next() << endl;
+								prevBucket = currBucket;
+							}
+						}
+
 						// Display capacity
-						outputFile << "Base Capacity: " << 0		// Size of hash table
-							<< "; Total Capacity: " << 0	// Size of hash plus overflow
-							<< "; Load Factor: " << 0		// Drilling Records / Total Capacity
+						outputFile << "Base Capacity: " << drillingTable->getBaseCapacity()		// Size of hash table
+							<< "; Total Capacity: " << drillingTable->getTotalCapacity()	// Size of hash plus overflow
+							<< "; Load Factor: " << drillingTable->getLoadFactor()		// Drilling Records / Total Capacity
 							<< endl;
 						// Outputs internal tallies
 						outputFile << "Data lines read: " << dataLines
@@ -622,45 +647,34 @@ void outputLoop(void) {
 					}
 
 					else {
-						// Prints data (loop)
-						try {
-							// Drilling List has nothing to display
-							if (drillingList->getSize() == 0) {
-								// Outputs internal tallies
-								cout << "Data lines read: " << dataLines
-									<< "; Valid Drilling records read: " << validEntries
-									<< "; Drilling records in memory: " << drillingList->getSize()
-									<< endl;
-								break;
-							}
-							while (enumerator.hasNext()) {
-								cout << enumerator.next() << endl;
-							}
+						// This case display all items by bucket
+						while (enumerator.hasNext()) {
+							// Gets bucket number
+							tempDR = &(enumerator.peek());
+							currBucket = drillingTable->getBucketNumber(*tempDR);
 
-							// This case display all items by bucket
-							// #: output
-							// Skip bucket if empty
-							// For overflow
-							// OVERFLOW: output
-							// Newline after all items in that bucket done
-							// Display capacity
-							cout << "Base Capacity: " << 0		// Size of hash table
-								<< "; Total Capacity: " << 0	// Size of hash plus overflow
-								<< "; Load Factor: " << 0		// Drilling Records / Total Capacity
-								<< endl;
-							// Outputs internal tallies
-							cout << "Data lines read: " << dataLines
-								<< "; Valid Drilling records read: " << validEntries
-								<< "; Drilling records in memory: " << drillingList->getSize()
-								<< endl;
+							if (prevBucket == currBucket) {
+								cout << "OVERFLOW: " << enumerator.next() << endl;
+							}
+							else {
+								cout << endl << currBucket << ": " << enumerator.next() << endl;
+								prevBucket = currBucket;
+							}
 						}
-						catch (ExceptionIndexOutOfRange e) {
-							// It broke :(
-						}
+
+						// Display capacity
+						cout << "Base Capacity: " << drillingTable->getBaseCapacity()		// Size of hash table
+							<< "; Total Capacity: " << drillingTable->getTotalCapacity()	// Size of hash plus overflow
+							<< "; Load Factor: " << drillingTable->getLoadFactor()		// Drilling Records / Total Capacity
+							<< endl;
+						// Outputs internal tallies
+						cout << "Data lines read: " << dataLines
+							<< "; Valid Drilling records read: " << validEntries
+							<< "; Drilling records in memory: " << drillingList->getSize()
+							<< endl;
 					}
 
 					break;
-					*/
 			}
 
 			cout << "Enter (o)utput, (s)ort, (f)ind, (m)erge, (p)urge, (r)ecords, (h)ash table, or (q)uit: ";
