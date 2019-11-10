@@ -2,7 +2,7 @@
 
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
+/*
 namespace HashTableTest
 {
 	TEST_CLASS(HashTableTest)
@@ -179,3 +179,4 @@ namespace HashTableTest
 		}
 	};
 }
+*/

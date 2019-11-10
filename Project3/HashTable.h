@@ -153,7 +153,8 @@ bool HashTable<T> :: insert(T item) {
 		size++;
 	}
 	// The list is null
-	catch (ExceptionLinkedListAccess*e) {
+	catch (ExceptionLinkedListAccess* e) {
+		delete e;
 		// If the item inserts, need to update the total capacity
 		if (table[bucket]->insert(item)) {
 			totalCapacity++;
@@ -241,7 +242,7 @@ template<typename T>
 void HashTable<T>::resize(void) {
 	// Create a temp table at the base capacity
 	// Initialize array at baseCapaticty
-	OULinkedList<T>** tempTable = new OULinkedList<T>*[baseCapacity];
+	OULinkedList<T>** tempTable = table;
 
 	unsigned int minSize = (unsigned int) (size / maxLoadFactor); // This gives the min number of necessary buckets
 	scheduleIndex = 0;

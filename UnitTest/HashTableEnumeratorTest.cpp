@@ -1,7 +1,7 @@
 #include "pch.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
+/*
 namespace HashTableEnumeratorTest
 {
 	TEST_CLASS(HashTableEnumeratorTest)
@@ -22,3 +22,4 @@ namespace HashTableEnumeratorTest
 		}
 	};
 }
+*/

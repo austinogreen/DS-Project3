@@ -1,7 +1,7 @@
 #include "pch.h"
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-
+/*
 namespace DrillingRecordHasherTest
 {
 	TEST_CLASS(DrillingRecordHasherTest)
@@ -22,3 +22,4 @@ namespace DrillingRecordHasherTest
 		}
 	};
 }
+*/

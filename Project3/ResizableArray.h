@@ -46,8 +46,8 @@ void ResizableArray<T> :: doubleCapacity(void) {
 		try {
 			newT[i] = get(i);
 		}
-		catch (ExceptionIndexOutOfRange e) {
-			// It broke :(
+		catch (ExceptionIndexOutOfRange* e) {
+			delete e;
 		}
 	}
 
@@ -76,8 +76,8 @@ void ResizableArray<T> :: halveCapacity(void) {
 		try {
 			newT[i] = get(i);
 		}
-		catch (ExceptionIndexOutOfRange e) {
-			// It broke :(
+		catch (ExceptionIndexOutOfRange* e) {
+			delete e;
 		}
 	}
 

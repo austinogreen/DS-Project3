@@ -28,12 +28,22 @@ HashTableEnumerator<T> :: HashTableEnumerator(HashTable<T>* hashTable) {
 	this->hashTable = hashTable;
 
 	// Initialize enumerator to first bucket's enumerator
-	chainEnumerator = hashTable->table[bucket].enumerator();
+	chainEnumerator = &(hashTable->table[bucket]->enumerator());
+
+	// Makes it so the next item in enumerator is available
+	// If the chain enumerator doesn't have next go to the next bucket and get its enumerator
+	while (!chainEnumerator->hasNext()) {
+		bucket++;
+		chainEnumerator = &(hashTable->table[bucket]->enumerator());
+	}
 }
 
 template <typename T>
 HashTableEnumerator<T> :: ~HashTableEnumerator() {
-
+	delete chainEnumerator;
+	hashTable = NULL;
+	bucket = 0;
+	itemNumber = 0;
 }
 
 template <typename T>
@@ -49,36 +59,29 @@ bool HashTableEnumerator<T> :: hasNext() const {
 // throws ExceptionEnumerationBeyondEnd if no next item is available
 template <typename T>
 T HashTableEnumerator<T> ::next() {
-	if (bucket > hashTable->getBaseCapacity()) {
+	if (itemNumber > hashTable->getSize()) {
 		throw new ExceptionEnumerationBeyondEnd;
 	}
+
+	T temp = chainEnumerator->next();
+	itemNumber++;
 
 	// If the chain enumerator doesn't have next go to the next bucket and get its enumerator
 	while (!chainEnumerator->hasNext()) {
 		bucket++;
-		chainEnumerator = hashTable->table[bucket].enumerator();
+		chainEnumerator = &(hashTable->table[bucket]->enumerator());
 	}
 
-	// Increment items and return the next
-	itemNumber++;
-	return chainEnumerator->next();
+	return temp;
 }
 
 // throws ExceptionEnumerationBeyondEnd if no next item is available
 template <typename T>
 T HashTableEnumerator<T> :: peek() const {
-	if (bucket > hashTable->getBaseCapacity()) {
+	if (itemNumber > hashTable->getSize()) {
 		throw new ExceptionEnumerationBeyondEnd;
 	}
 
-	// If the chain enumerator doesn't have next go to the next bucket and get its enumerator
-	while (!(chainEnumerator->hasNext())) {
-		bucket++;
-		chainEnumerator = hashTable->table[bucket].enumerator();
-	}
-
-	// Increment items and return the next
-	itemNumber++;
 	return chainEnumerator->peek();
 }
 

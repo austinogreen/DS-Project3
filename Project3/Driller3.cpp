@@ -524,9 +524,9 @@ void outputLoop(void) {
 
 					break;
 
-				case 'r':
+				case 'r': {
 
-					OULinkedListEnumerator<DrillingRecord> enumerator = drillingList->enumerator();
+					OULinkedListEnumerator<DrillingRecord> llenumerator = drillingList->enumerator();
 
 					// Checks for file to output to
 					cout << "Enter output file name: ";
@@ -558,8 +558,8 @@ void outputLoop(void) {
 							break;
 						}
 
-						while (enumerator.hasNext()) {
-							outputFile << enumerator.next() << endl;
+						while (llenumerator.hasNext()) {
+							outputFile << llenumerator.next() << endl;
 						}
 
 						// Outputs internal tallies
@@ -579,8 +579,8 @@ void outputLoop(void) {
 								<< endl;
 							break;
 						}
-						while (enumerator.hasNext()) {
-							cout << enumerator.next() << endl;
+						while (llenumerator.hasNext()) {
+							cout << llenumerator.next() << endl;
 						}
 
 						// Outputs internal tallies
@@ -590,11 +590,11 @@ void outputLoop(void) {
 							<< endl;
 					}
 					break;
-
+				}
 				case 'h':
 
 					// HashTable Enumerator and the Previous and Current Buckets
-					HashTableEnumerator<DrillingRecord> enumerator = HashTableEnumerator<DrillingRecord>(drillingTable);
+					HashTableEnumerator<DrillingRecord> htenumerator = HashTableEnumerator<DrillingRecord>(drillingTable);
 					unsigned long currBucket;
 					unsigned long prevBucket = -1;
 
@@ -620,16 +620,16 @@ void outputLoop(void) {
 						}
 
 						// This case display all items by bucket
-						while (enumerator.hasNext()) {
+						while (htenumerator.hasNext()) {
 							// Gets bucket number
-							tempDR = &(enumerator.peek());
+							tempDR = &(htenumerator.peek());
 							currBucket = drillingTable->getBucketNumber(*tempDR);
 														
 							if (prevBucket == currBucket) {
-								outputFile << "OVERFLOW: " << enumerator.next() << endl;
+								outputFile << "OVERFLOW: " << htenumerator.next() << endl;
 							}
 							else {
-								outputFile << endl << currBucket << ": " << enumerator.next() << endl;
+								outputFile << endl << currBucket << ": " << htenumerator.next() << endl;
 								prevBucket = currBucket;
 							}
 						}
@@ -648,16 +648,16 @@ void outputLoop(void) {
 
 					else {
 						// This case display all items by bucket
-						while (enumerator.hasNext()) {
+						while (htenumerator.hasNext()) {
 							// Gets bucket number
-							tempDR = &(enumerator.peek());
+							tempDR = &(htenumerator.peek());
 							currBucket = drillingTable->getBucketNumber(*tempDR);
 
 							if (prevBucket == currBucket) {
-								cout << "OVERFLOW: " << enumerator.next() << endl;
+								cout << "OVERFLOW: " << htenumerator.next() << endl;
 							}
 							else {
-								cout << endl << currBucket << ": " << enumerator.next() << endl;
+								cout << endl << currBucket << ": " << htenumerator.next() << endl;
 								prevBucket = currBucket;
 							}
 						}
