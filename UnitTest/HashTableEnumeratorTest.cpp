@@ -1,24 +1,60 @@
 #include "pch.h"
 
-using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 /*
+using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace HashTableEnumeratorTest
 {
 	TEST_CLASS(HashTableEnumeratorTest)
 	{
 	public:
 
-		TEST_METHOD(TestHash)
+		TEST_METHOD(TestHasNextEmpty)
 		{
-			DrillingRecord* dr = new DrillingRecord();
-			DrillingRecordHasher* hasher = new DrillingRecordHasher();
-			dr->setString("00:00:00", 1);
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
-			Assert::IsTrue(hasher->hash(*dr) == 404);
+			HashTableEnumerator<DrillingRecord> enumerator = HashTableEnumerator<DrillingRecord>(ht);
 
-			dr->setString("11:11:11", 1);
+			Assert::IsFalse(enumerator.hasNext());
+		}
 
-			Assert::IsTrue(hasher->hash(*dr) == 410);
+		TEST_METHOD(TestHasNextOneBucket)
+		{
+			DrillingRecord dr;
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
+
+			HashTableEnumerator<DrillingRecord> enumerator = HashTableEnumerator<DrillingRecord>(ht);
+
+			ht->insert(dr);
+
+			Assert::IsTrue(enumerator.hasNext());
+		}
+		TEST_METHOD(TestNext)
+		{
+			DrillingRecord dr;
+			dr.setString("00:00:00",1);
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
+			ht->insert(dr);
+
+			HashTableEnumerator<DrillingRecord> enumerator = HashTableEnumerator<DrillingRecord>(ht);
+
+			Assert::IsTrue(enumerator.next().getString(1) == dr.getString(1));
+		}
+		TEST_METHOD(TestPeekEmpty)
+		{
+			DrillingRecord dr;
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
+			
+			HashTableEnumerator<DrillingRecord> enumerator = HashTableEnumerator<DrillingRecord>(ht);
+
+			try {
+				enumerator.peek();
+				Assert::Fail();
+			}
+			catch (ExceptionEnumerationBeyondEnd* e) {
+				delete e;
+				Assert::IsTrue(true);
+			}
+
 		}
 	};
 }

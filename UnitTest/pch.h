@@ -9,11 +9,5 @@
 
 // add headers that you want to pre-compile here
 
-#include "../Project3/DrillingRecordHasher.cpp"
-#include "../Project3/DrillingRecord.cpp"
-#include "../Project3/HashTable.h"
-#include "../Project3/DrillingRecordComparator.cpp"
-#include "CppUnitTest.h"
-
 
 #endif //PCH_H

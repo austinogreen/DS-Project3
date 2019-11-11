@@ -1,7 +1,7 @@
 #include "pch.h"
+/*
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-/*
 namespace DrillingRecordHasherTest
 {
 	TEST_CLASS(DrillingRecordHasherTest)
@@ -10,15 +10,15 @@ namespace DrillingRecordHasherTest
 		
 		TEST_METHOD(TestHash)
 		{
-			DrillingRecord* dr = new DrillingRecord();
+			DrillingRecord dr;
 			DrillingRecordHasher* hasher = new DrillingRecordHasher();
-			dr->setString("00:00:00",1);
+			dr.setString("00:00:00",1);
 
-			Assert::IsTrue(hasher->hash(*dr) == 404);
+			Assert::IsTrue(hasher->hash(dr) == 404);
 
-			dr->setString("11:11:11", 1);
+			dr.setString("11:11:11", 1);
 
-			Assert::IsTrue(hasher->hash(*dr) == 410);
+			Assert::IsTrue(hasher->hash(dr) == 410);
 		}
 	};
 }

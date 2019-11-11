@@ -1,8 +1,14 @@
 #include "pch.h"
 
+#include "../Project3/DrillingRecordHasher.cpp"
+#include "../Project3/DrillingRecord.cpp"
+#include "../Project3/HashTable.h"
+#include "../Project3/DrillingRecordComparator.cpp"
+#include "../Project3/HashTableEnumerator.h"
+#include "CppUnitTest.h"
+#include <string>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
-/*
 namespace HashTableTest
 {
 	TEST_CLASS(HashTableTest)
@@ -15,43 +21,51 @@ namespace HashTableTest
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
-			DrillingRecord* dr = new DrillingRecord();
+			DrillingRecord dr;
 
-			dr->setString("00:00:00", 1);
+			dr.setString("00:00:00", 1);
 
-			ht->insert(*dr);
+			ht->insert(dr);
 
-			Assert::IsTrue(&ht->find(*dr) == dr);
+			Assert::IsTrue(ht->find(dr).getString(1) == dr.getString(1));
 		}
 
 		TEST_METHOD(TestHashTableFindFalse)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
-			DrillingRecord* dr = new DrillingRecord();
+			DrillingRecord dr;
 
-			dr->setString("00:00:00", 1);
+			dr.setString("00:00:00", 1);
 
-			ht->insert(*dr);
+			ht->insert(dr);
 
-			dr->setString("00:00:01", 1);
+			dr.setString("00:00:01", 1);
 
-			Assert::IsFalse(&ht->find(*dr) == dr);
+			try {
+				ht->find(dr);
+				Assert::Fail();
+			}
+			catch (ExceptionHashTableAccess* e) {
+				delete e;
+				Assert::IsTrue(true);
+			}
 		}
 
 		TEST_METHOD(TestHashTableFindEmpty)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
-			DrillingRecord* dr = new DrillingRecord();
+			DrillingRecord dr;
 
-			dr->setString("00:00:00", 1);
+			dr.setString("00:00:00", 1);
 
 			try {
-				ht ->find(*dr);
-				Assert::IsTrue(false);
+				ht ->find(dr);
+				Assert::Fail();
 			}
-			catch (ExceptionHashTableAccess e) {
+			catch (ExceptionHashTableAccess* e) {
+				delete e;
 				Assert::IsTrue(true);
 			}
 		}
@@ -101,7 +115,7 @@ namespace HashTableTest
 
 		TEST_METHOD(TestHashTableGetLoadFactor100)
 		{
-			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(),100);
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(),100,DEFAULT_MAX_LOAD_FACTOR,DEFAULT_MIN_LOAD_FACTOR);
 
 			DrillingRecord* dr = new DrillingRecord();
 			dr->setString("00:00:00", 1);
@@ -179,4 +193,3 @@ namespace HashTableTest
 		}
 	};
 }
-*/
