@@ -46,28 +46,6 @@ namespace HashTableEnumeratorTest
 
 			Assert::IsTrue(enumerator.next().getString(1) == dr.getString(1));
 		}
-
-		TEST_METHOD(TestNextNone)
-		{
-			DrillingRecord dr;
-			dr.setString("00:00:00", 1);
-			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
-			ht->insert(dr);
-
-			HashTableEnumerator<DrillingRecord> enumerator = HashTableEnumerator<DrillingRecord>(ht);
-
-			enumerator.next();
-
-			try {
-				enumerator.next();
-				Assert::Fail();
-			}
-			catch (ExceptionEnumerationBeyondEnd* e) {
-				delete e;
-				Assert::IsTrue(true);
-			}
-
-		}
 		TEST_METHOD(TestPeekEmpty)
 		{
 			DrillingRecord dr;
@@ -83,32 +61,7 @@ namespace HashTableEnumeratorTest
 				delete e;
 				Assert::IsTrue(true);
 			}
-		}
 
-		TEST_METHOD(TestPeek)
-		{
-			DrillingRecord dr;
-			dr.setString("00:00:00", 1);
-			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
-			ht->insert(dr);
-
-			HashTableEnumerator<DrillingRecord> enumerator = HashTableEnumerator<DrillingRecord>(ht);
-
-			Assert::IsTrue(enumerator.peek().getString(1) == dr.getString(1));
-		}
-
-		TEST_METHOD(TestPeekX2)
-		{
-			DrillingRecord dr;
-			dr.setString("00:00:00", 1);
-			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
-			ht->insert(dr);
-
-			HashTableEnumerator<DrillingRecord> enumerator = HashTableEnumerator<DrillingRecord>(ht);
-
-			enumerator.peek();
-
-			Assert::IsTrue(enumerator.peek().getString(1) == dr.getString(1));
 		}
 	};
 }
