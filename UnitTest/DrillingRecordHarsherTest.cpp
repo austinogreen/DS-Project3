@@ -1,6 +1,7 @@
 #include "pch.h"
-/*
 
+
+/*
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace DrillingRecordHasherTest
 {
@@ -21,5 +22,4 @@ namespace DrillingRecordHasherTest
 			Assert::IsTrue(hasher->hash(dr) == 410);
 		}
 	};
-}
-*/
+}*/

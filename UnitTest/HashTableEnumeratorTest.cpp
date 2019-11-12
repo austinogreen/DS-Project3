@@ -1,13 +1,7 @@
 #include "pch.h"
 
 
-#include "../Project3/DrillingRecordHasher.cpp"
-#include "../Project3/DrillingRecord.cpp"
-#include "../Project3/HashTable.h"
-#include "../Project3/DrillingRecordComparator.cpp"
-#include "../Project3/HashTableEnumerator.h"
-#include "CppUnitTest.h"
-
+/*
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace HashTableEnumeratorTest
 {
@@ -111,4 +105,4 @@ namespace HashTableEnumeratorTest
 			Assert::IsTrue(enumerator.peek().getString(1) == dr.getString(1));
 		}
 	};
-}
+}*/

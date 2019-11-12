@@ -34,13 +34,14 @@ HashTableEnumerator<T> :: HashTableEnumerator(HashTable<T>* hashTable) {
 	}
 
 	// Initialize enumerator to first bucket's enumerator
-	chainEnumerator = &hashTable->table[bucket]->enumerator();
+	// Creates copy of the local variable to keep it in memory
+	chainEnumerator = new OULinkedListEnumerator<T>(hashTable->table[bucket]->enumerator());
 
 	// Makes it so the next item in enumerator is available
 	// If the chain enumerator doesn't have next go to the next bucket and get its enumerator
-	while (!chainEnumerator->hasNext()) {
+	while ((itemNumber < hashTable->getSize()) && (!chainEnumerator->hasNext())) {
 		bucket++;
-		chainEnumerator = &hashTable->table[bucket]->enumerator();
+		chainEnumerator = new OULinkedListEnumerator<T>(hashTable->table[bucket]->enumerator());
 	}
 }
 
@@ -72,9 +73,9 @@ T HashTableEnumerator<T> ::next() {
 	itemNumber++;
 
 	// If the chain enumerator doesn't have next go to the next bucket and get its enumerator
-	while (!chainEnumerator->hasNext()) {
+	while ((itemNumber < hashTable->getSize()) && (!chainEnumerator->hasNext())) {
 		bucket++;
-		chainEnumerator = &hashTable->table[bucket]->enumerator();
+		chainEnumerator = new OULinkedListEnumerator<T>(hashTable->table[bucket]->enumerator());
 	}
 
 	return temp;

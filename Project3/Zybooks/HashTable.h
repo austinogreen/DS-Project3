@@ -108,6 +108,7 @@ HashTable<T> :: HashTable(Comparator<T>* comparator, Hasher<T>* hasher,	unsigned
 
 	// Base capacity of the table
 	baseCapacity = SCHEDULE[scheduleIndex];
+	totalCapacity = baseCapacity;
 
 	// Initialize array at baseCapaticty
 	table = new OULinkedList<T> * [baseCapacity];
@@ -151,13 +152,13 @@ bool HashTable<T> :: insert(T item) {
 			return false;
 		}
 		size++;
+		totalCapacity++;
 	}
 	// The list is null
 	catch (ExceptionLinkedListAccess* e) {
 		delete e;
 		// If the item inserts, need to update the total capacity
 		if (table[bucket]->insert(item)) {
-			totalCapacity++;
 			size++;
 		}
 		// Item is already in the chain
@@ -189,7 +190,7 @@ template <typename T>
 bool HashTable<T> :: remove(T item) {
 	unsigned long bucket = getBucketNumber(item);
 
-	if (table[bucket]->remove) {
+	if (table[bucket]->remove(item)) {
 		size--;
 	}
 	else {
@@ -252,6 +253,7 @@ void HashTable<T>::resize(void) {
 
 	// Base capacity of the table
 	baseCapacity = SCHEDULE[scheduleIndex];
+	totalCapacity = baseCapacity;
 
 	// Initialize array at baseCapaticty
 	table = new OULinkedList<T> * [baseCapacity];

@@ -588,6 +588,12 @@ void outputLoop(void) {
 					break;
 				}
 				case 'h':
+					// If the list has been updated since last array transfer
+					if (changed) {
+						listToArray();
+						sortedColumn = 1;
+						changed = false;
+					}
 
 					// HashTable Enumerator and the Previous and Current Buckets
 					HashTableEnumerator<DrillingRecord> htenumerator = HashTableEnumerator<DrillingRecord>(drillingTable);
@@ -617,17 +623,20 @@ void outputLoop(void) {
 
 						// This case display all items by bucket
 						while (htenumerator.hasNext()) {
+
 							// Gets bucket number
-							tempDR = htenumerator.peek();
-							currBucket = drillingTable->getBucketNumber(tempDR);
-														
-							if (prevBucket == currBucket) {
+							currBucket = drillingTable->getBucketNumber(htenumerator.peek());
+							outputFile << currBucket << ": " << htenumerator.next() << endl;
+
+							while ((currBucket == prevBucket) && htenumerator.hasNext()) {
+								// Gets bucket number
+								currBucket = drillingTable->getBucketNumber(htenumerator.peek());
 								outputFile << "OVERFLOW: " << htenumerator.next() << endl;
 							}
-							else {
-								outputFile << endl << currBucket << ": " << htenumerator.next() << endl;
-								prevBucket = currBucket;
-							}
+
+							outputFile << endl;
+
+							prevBucket = currBucket;
 						}
 
 						// Display capacity
@@ -645,17 +654,20 @@ void outputLoop(void) {
 					else {
 						// This case display all items by bucket
 						while (htenumerator.hasNext()) {
-							// Gets bucket number
-							tempDR = htenumerator.peek();
-							currBucket = drillingTable->getBucketNumber(tempDR);
 
-							if (prevBucket == currBucket) {
+							// Gets bucket number
+							currBucket = drillingTable->getBucketNumber(htenumerator.peek());
+							cout << currBucket << ": " << htenumerator.next() << endl;
+							
+							while ((currBucket == prevBucket) && htenumerator.hasNext()) {
+								// Gets bucket number
+								currBucket = drillingTable->getBucketNumber(htenumerator.peek());
 								cout << "OVERFLOW: " << htenumerator.next() << endl;
 							}
-							else {
-								cout << endl << currBucket << ": " << htenumerator.next() << endl;
-								prevBucket = currBucket;
-							}
+
+							cout << endl;
+
+							prevBucket = currBucket;
 						}
 
 						// Display capacity

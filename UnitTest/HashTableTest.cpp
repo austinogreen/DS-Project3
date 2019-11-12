@@ -1,6 +1,13 @@
 #include "pch.h"
 
-/*
+#include "../Project3/DrillingRecordHasher.cpp"
+#include "../Project3/DrillingRecord.cpp"
+#include "../Project3/HashTable.h"
+#include "../Project3/DrillingRecordComparator.cpp"
+#include "../Project3/HashTableEnumerator.h"
+#include "CppUnitTest.h"
+
+
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace HashTableTest
 {
@@ -81,10 +88,19 @@ namespace HashTableTest
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
-			DrillingRecord* dr = new DrillingRecord();
-			dr->setString("00:00:00", 1);
+			DrillingRecord dr;
+			dr.setString("00:00:00", 1);
 
-			Assert::IsTrue(ht->getBucketNumber(*dr) == (404 % baseCap));
+			Assert::IsTrue(ht->getBucketNumber(dr) == (404 % baseCap));
+
+			// These are from the doc
+			dr.setString("22:43:12", 1);
+
+			Assert::IsTrue(ht->getBucketNumber(dr) == 0);
+
+			dr.setString("22:43:13", 1);
+
+			Assert::IsTrue(ht->getBucketNumber(dr) == 1);
 		}
 
 		TEST_METHOD(TestGetLoadFactorEmpty)
@@ -149,7 +165,7 @@ namespace HashTableTest
 			Assert::IsTrue(ht->getSize() == 1);
 		}
 
-		TEST_METHOD(TestGetLoadFactorResize)
+		TEST_METHOD(TestGetSizeResize)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(), 1, DEFAULT_MAX_LOAD_FACTOR, DEFAULT_MIN_LOAD_FACTOR);
 
@@ -235,4 +251,4 @@ namespace HashTableTest
 			Assert::Fail();
 		}
 	};
-}*/
+}
