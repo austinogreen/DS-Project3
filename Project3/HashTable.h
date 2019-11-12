@@ -152,13 +152,13 @@ bool HashTable<T> :: insert(T item) {
 			return false;
 		}
 		size++;
+		totalCapacity++;
 	}
 	// The list is null
 	catch (ExceptionLinkedListAccess* e) {
 		delete e;
 		// If the item inserts, need to update the total capacity
 		if (table[bucket]->insert(item)) {
-			totalCapacity++;
 			size++;
 		}
 		// Item is already in the chain

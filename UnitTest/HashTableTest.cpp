@@ -6,7 +6,6 @@
 #include "../Project3/DrillingRecordComparator.cpp"
 #include "../Project3/HashTableEnumerator.h"
 #include "CppUnitTest.h"
-#include <string>
 
 using namespace Microsoft::VisualStudio::CppUnitTestFramework;
 namespace HashTableTest
@@ -17,7 +16,7 @@ namespace HashTableTest
 
 		const int baseCap = 11;
 
-		TEST_METHOD(TestHashTableFindTrue)
+		TEST_METHOD(TestFindTrue)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
@@ -30,7 +29,7 @@ namespace HashTableTest
 			Assert::IsTrue(ht->find(dr).getString(1) == dr.getString(1));
 		}
 
-		TEST_METHOD(TestHashTableFindFalse)
+		TEST_METHOD(TestFindFalse)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
@@ -52,7 +51,7 @@ namespace HashTableTest
 			}
 		}
 
-		TEST_METHOD(TestHashTableFindEmpty)
+		TEST_METHOD(TestFindEmpty)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
@@ -70,21 +69,21 @@ namespace HashTableTest
 			}
 		}
 
-		TEST_METHOD(TestHashTableGetBaseCapacityDefault)
+		TEST_METHOD(TestGetBaseCapacityDefault)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
 			Assert::IsTrue(ht->getBaseCapacity() == baseCap);
 		}
 
-		TEST_METHOD(TestHashTableGetBaseCapacity100)
+		TEST_METHOD(TestGetBaseCapacity100)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(),100);
 
 			Assert::IsTrue(ht->getBaseCapacity() == 223);
 		}
 
-		TEST_METHOD(TestHashTableGetBucketNumber)
+		TEST_METHOD(TestGetBucketNumber)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
@@ -94,14 +93,14 @@ namespace HashTableTest
 			Assert::IsTrue(ht->getBucketNumber(*dr) == (404 % baseCap));
 		}
 
-		TEST_METHOD(TestHashTableGetLoadFactorEmpty)
+		TEST_METHOD(TestGetLoadFactorEmpty)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
 			Assert::IsTrue(ht->getLoadFactor() == 0);
 		}
 
-		TEST_METHOD(TestHashTableGetLoadFactorBase)
+		TEST_METHOD(TestGetLoadFactorBase)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
@@ -110,10 +109,10 @@ namespace HashTableTest
 
 			ht->insert(*dr);
 
-			Assert::IsTrue(ht->getLoadFactor() == (1./11));
+			Assert::IsTrue(ht->getLoadFactor() == ((float)1 / 11));
 		}
 
-		TEST_METHOD(TestHashTableGetLoadFactor100)
+		TEST_METHOD(TestGetLoadFactor100)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(),100,DEFAULT_MAX_LOAD_FACTOR,DEFAULT_MIN_LOAD_FACTOR);
 
@@ -122,17 +121,29 @@ namespace HashTableTest
 
 			ht->insert(*dr);
 
-			Assert::IsTrue(ht->getLoadFactor() == (1. / 223));
+			Assert::IsTrue(ht->getLoadFactor() == ((float)1 / 223));
 		}
 
-		TEST_METHOD(TestHashTableGetSizeEmpty)
+		TEST_METHOD(TestGetLoadFactorResize)
+		{
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(), 1, DEFAULT_MAX_LOAD_FACTOR, DEFAULT_MIN_LOAD_FACTOR);
+
+			DrillingRecord* dr = new DrillingRecord();
+			dr->setString("00:00:00", 1);
+
+			ht->insert(*dr);
+
+			Assert::IsTrue(ht->getLoadFactor() == ((float)1 / 2));
+		}
+
+		TEST_METHOD(TestGetSizeEmpty)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
 			Assert::IsTrue(ht->getSize() == 0);
 		}
 
-		TEST_METHOD(TestHashTableGetSize1)
+		TEST_METHOD(TestGetSize1)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
@@ -144,19 +155,19 @@ namespace HashTableTest
 			Assert::IsTrue(ht->getSize() == 1);
 		}
 
-		TEST_METHOD(TestHashTableGetTotalCapacity)
+		TEST_METHOD(TestGetLoadFactorResize)
 		{
-			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(), 1, DEFAULT_MAX_LOAD_FACTOR, DEFAULT_MIN_LOAD_FACTOR);
 
 			DrillingRecord* dr = new DrillingRecord();
 			dr->setString("00:00:00", 1);
 
 			ht->insert(*dr);
 
-			Assert::IsTrue(true);
+			Assert::IsTrue(ht->getSize() == 1);
 		}
 
-		TEST_METHOD(TestHashTableInsert)
+		TEST_METHOD(TestGetTotalCapacityBase)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
@@ -165,22 +176,36 @@ namespace HashTableTest
 
 			ht->insert(*dr);
 
-			Assert::IsTrue(true);
+			Assert::IsTrue(ht->getTotalCapacity() == 11);
 		}
 
-		TEST_METHOD(TestHashTableRemove)
+		TEST_METHOD(TestGetTotalCapacity100)
 		{
-			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(), 100, DEFAULT_MAX_LOAD_FACTOR, DEFAULT_MIN_LOAD_FACTOR);
 
 			DrillingRecord* dr = new DrillingRecord();
 			dr->setString("00:00:00", 1);
 
 			ht->insert(*dr);
 
-			Assert::IsTrue(true);
+			Assert::IsTrue(ht->getTotalCapacity() == 223);
 		}
 
-		TEST_METHOD(TestHashTableReplace)
+		TEST_METHOD(TestGetTotalCapacityLL)
+		{
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher(), 3, DEFAULT_MAX_LOAD_FACTOR, DEFAULT_MIN_LOAD_FACTOR);
+
+			DrillingRecord* dr = new DrillingRecord();
+			dr->setString("00:00:00", 1);
+			ht->insert(*dr);
+
+			dr->setString("00:00:05", 1);
+			ht->insert(*dr);
+
+			Assert::IsTrue(ht->getTotalCapacity() == 6);
+		}
+
+		TEST_METHOD(TestInsert)
 		{
 			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
 
@@ -189,7 +214,31 @@ namespace HashTableTest
 
 			ht->insert(*dr);
 
-			Assert::IsTrue(true);
+			Assert::Fail();
+		}
+
+		TEST_METHOD(TestRemove)
+		{
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
+
+			DrillingRecord* dr = new DrillingRecord();
+			dr->setString("00:00:00", 1);
+
+			ht->insert(*dr);
+
+			Assert::Fail();
+		}
+
+		TEST_METHOD(TestReplace)
+		{
+			HashTable<DrillingRecord>* ht = new HashTable<DrillingRecord>(new DrillingRecordComparator(1), new DrillingRecordHasher());
+
+			DrillingRecord* dr = new DrillingRecord();
+			dr->setString("00:00:00", 1);
+
+			ht->insert(*dr);
+
+			Assert::Fail();
 		}
 	};
 }
